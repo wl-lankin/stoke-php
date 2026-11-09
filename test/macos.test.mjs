@@ -72,7 +72,7 @@ test('tarHas finds a file in a tar.gz, also behind a pax path and after other fi
 
 test('entries from releases list spx only where the archive holds it', async () => {
   const { entriesFromReleases } = await import('../scripts/macos-entry.mjs');
-  const repo = 'wl-lankin/hearth-php';
+  const repo = 'wl-lankin/stoke-php';
   const asset = (v, arch) => ({ name: `php-${v}-macos-${arch}.tar.gz`, size: 1 });
   const releases = [
     { tag_name: 'php-8.4.27', assets: [asset('8.4.27', 'arm64')] },
@@ -108,7 +108,7 @@ test('merging keeps one build per minor and arch, the newest version wins', () =
 
 test('only entries pointing at this repo\'s own php release pass the check', async () => {
   const { checkEntry } = await import('../scripts/macos-entry.mjs');
-  const repo = 'wl-lankin/hearth-php';
+  const repo = 'wl-lankin/stoke-php';
   const good = macosEntry({
     version: '8.4.27', arch: 'arm64', sha256: sha, size: 1,
     url: `https://github.com/${repo}/releases/download/php-8.4.27/php-8.4.27-macos-arm64.tar.gz`,
@@ -120,14 +120,22 @@ test('only entries pointing at this repo\'s own php release pass the check', asy
     `https://github.com/${repo}/releases/download/php-8.4.26/php-8.4.27-macos-arm64.tar.gz`,
     `https://github.com/${repo}/releases/download/php-8.4.27/php-8.4.27-macos-x86_64.tar.gz`,
   ]) {
-    assert.throws(() => checkEntry(repo, { ...good, url }), /not a hearth-php macOS build/, url);
+    assert.throws(() => checkEntry(repo, { ...good, url }), /not a stoke-php macOS build/, url);
   }
-  assert.throws(() => checkEntry(repo, { ...good, os: 'windows' }), /not a hearth-php macOS build/);
+  assert.throws(() => checkEntry(repo, { ...good, os: 'windows' }), /not a stoke-php macOS build/);
+});
+
+test('builds released under the former repo name (hearth-php) still pass the check', async () => {
+  const { checkEntry } = await import('../scripts/macos-entry.mjs');
+  const url = 'https://github.com/wl-lankin/hearth-php/releases/download/php-8.4.27/php-8.4.27-macos-arm64.tar.gz';
+  const old = macosEntry({ version: '8.4.27', arch: 'arm64', sha256: sha, size: 1, url });
+  assert.doesNotThrow(() => checkEntry('wl-lankin/stoke-php', old));
+  assert.throws(() => checkEntry('someone/stoke-php-fork', old), /not a stoke-php macOS build/);
 });
 
 test('entries come straight from the php-<version> releases', async () => {
   const { entriesFromReleases } = await import('../scripts/macos-entry.mjs');
-  const repo = 'wl-lankin/hearth-php';
+  const repo = 'wl-lankin/stoke-php';
   const asset = (v, arch) => ({
     name: `php-${v}-macos-${arch}.tar.gz`, size: 31000000,
     browser_download_url: `https://github.com/${repo}/releases/download/php-${v}/php-${v}-macos-${arch}.tar.gz`,

@@ -17,7 +17,7 @@ export const example = {
     },
     {
       minor: '8.4', version: '8.4.27', channel: 'stable', os: 'macos', arch: 'arm64',
-      url: 'https://github.com/wl-lankin/hearth-php/releases/download/php-8.4.27/php-8.4.27-macos-arm64.tar.gz',
+      url: 'https://github.com/wl-lankin/stoke-php/releases/download/php-8.4.27/php-8.4.27-macos-arm64.tar.gz',
       sha256: sha, size: 1, format: 'tar.gz', root: 'php-8.4.27',
       extensions: { redis: { kind: 'builtin' }, xdebug: { kind: 'zend_so', file: 'lib/xdebug.so' } },
     },

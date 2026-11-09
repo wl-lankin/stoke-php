@@ -141,7 +141,8 @@ test('the catalog accepts services and checks them', async () => {
 test('a source that fails keeps its published entries, without the own macOS builds', async () => {
   const known = new Map([
     ['https://cdn.mysql.com/a.zip', { kind: 'mysql', url: 'https://cdn.mysql.com/a.zip' }],
-    ['https://github.com/wl-lankin/hearth-php/releases/download/redis-8/r.tar.gz', { kind: 'redis', url: 'https://github.com/wl-lankin/hearth-php/releases/download/redis-8/r.tar.gz' }],
+    ['https://github.com/wl-lankin/stoke-php/releases/download/redis-8/r.tar.gz', { kind: 'redis', url: 'https://github.com/wl-lankin/stoke-php/releases/download/redis-8/r.tar.gz' }],
+    ['https://github.com/wl-lankin/hearth-php/releases/download/redis-7/r.tar.gz', { kind: 'redis', url: 'https://github.com/wl-lankin/hearth-php/releases/download/redis-7/r.tar.gz' }],
     ['https://github.com/redis-windows/r.zip', { kind: 'redis', url: 'https://github.com/redis-windows/r.zip' }],
   ]);
   const warnings = [];

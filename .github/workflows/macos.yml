@@ -107,7 +107,7 @@ jobs:
           cp "$(find buildroot -name xdebug.so | head -n 1)" "$DIR/lib/xdebug.so"
           cp "$(find buildroot -name spx.so | head -n 1)" "$DIR/lib/spx.so"
           # SPX serves its report pages from files baked in at build time as a runner path: ship
-          # them, Hearth sets spx.http_ui_assets_dir to this folder.
+          # them, Stoke sets spx.http_ui_assets_dir to this folder.
           UI="$(find source buildroot -type d -path '*assets/web-ui' | head -n 1)"
           [ -f "$UI/report.html" ] || { echo "::error::SPX web UI not found"; exit 1; }
           mkdir -p "$DIR/share/spx"
@@ -125,13 +125,13 @@ jobs:
             echo "$MODULES" | grep -qx "$name" || { echo "::error::$ext is missing"; exit 1; }
           done
           "$DIR/bin/php" -d "zend_extension=$PWD/$DIR/lib/xdebug.so" -v | grep -q Xdebug
-          # SPX loads and writes a full report (metadata .json + .txt.gz) where Hearth points it.
+          # SPX loads and writes a full report (metadata .json + .txt.gz) where Stoke points it.
           "$DIR/bin/php" -d "extension=$PWD/$DIR/lib/spx.so" -m | grep -qix spx
           mkdir spxdata
           echo '<?php function f($n) { return $n < 2 ? $n : f($n - 1) + f($n - 2); } echo f(15);' > spx.php
           SPX_ENABLED=1 SPX_REPORT=full "$DIR/bin/php" -d "extension=$PWD/$DIR/lib/spx.so" -d "spx.data_dir=$PWD/spxdata" spx.php
           ls spxdata/*.json spxdata/*.txt.gz
-          # Its web UI answers over HTTP with the settings Hearth writes (the CLI never serves it).
+          # Its web UI answers over HTTP with the settings Stoke writes (the CLI never serves it).
           mkdir spxweb && echo '<?php echo "app";' > spxweb/index.php
           "$DIR/bin/php" -d "extension=$PWD/$DIR/lib/spx.so" -d spx.http_enabled=1 -d spx.http_key=k \
             -d spx.http_ip_whitelist=127.0.0.1 -d "spx.http_ui_assets_dir=$PWD/$DIR/share/spx/web-ui" \

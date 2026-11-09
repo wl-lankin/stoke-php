@@ -1,4 +1,4 @@
-// Hearth's own macOS builds of the services that ship none (Redis, MariaDB), built by
+// Stoke's own macOS builds of the services that ship none (Redis, MariaDB), built by
 // services-macos.yml into releases `<kind>-<version>` with `<kind>-<version>-macos-<arch>.tar.gz`.
 //
 //   node scripts/services-macos.mjs plan               JSON list of {kind, version} still to build
@@ -50,8 +50,8 @@ export async function entriesFromReleases({ releases, hash }) {
 }
 
 async function main([command, out]) {
-  const repo = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/hearth-php';
-  const headers = { 'User-Agent': 'hearth-php services', ...(process.env.GH_TOKEN ? { Authorization: `Bearer ${process.env.GH_TOKEN}` } : {}) };
+  const repo = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/stoke-php';
+  const headers = { 'User-Agent': 'stoke-php services', ...(process.env.GH_TOKEN ? { Authorization: `Bearer ${process.env.GH_TOKEN}` } : {}) };
   const api = async (path) => (await fetch(`https://api.github.com/${path}`, { headers })).json();
   // Every page: the php-<version> releases alone outgrow one page of 100.
   const releases = [];

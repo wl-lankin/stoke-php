@@ -14,13 +14,13 @@ export function minorsToBuild(latest, releases) {
 
 /** Request headers for `url`: the GitHub token goes to the GitHub API only, never to other hosts. */
 export function headersFor(url, token) {
-  const headers = { 'User-Agent': 'hearth-php' };
+  const headers = { 'User-Agent': 'stoke-php' };
   if (token && new URL(url).hostname === 'api.github.com') headers.Authorization = `Bearer ${token}`;
   return headers;
 }
 
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  const repo = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/hearth-php';
+  const repo = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/stoke-php';
   const get = (url) => fetch(url, { headers: headersFor(url, process.env.GH_TOKEN) });
   const latest = {};
   for (const minor of SUPPORTED) {

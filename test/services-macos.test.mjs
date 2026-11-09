@@ -4,7 +4,7 @@ import { entriesFromReleases, planBuilds } from '../scripts/services-macos.mjs';
 
 const release = (tag, files) => ({
   tag_name: tag,
-  assets: files.map((name) => ({ name, browser_download_url: `https://github.com/wl-lankin/hearth-php/releases/download/${tag}/${name}` })),
+  assets: files.map((name) => ({ name, browser_download_url: `https://github.com/wl-lankin/stoke-php/releases/download/${tag}/${name}` })),
 });
 
 test('only versions without both macOS builds are planned', () => {

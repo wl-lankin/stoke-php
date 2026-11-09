@@ -1,4 +1,4 @@
-// Caddy, the web server Hearth runs, from its official GitHub release. Each file is checked against
+// Caddy, the web server Stoke runs, from its official GitHub release. Each file is checked against
 // the SHA-512 in caddy_<version>_checksums.txt before its SHA-256 goes into the catalog.
 import { createHash } from 'node:crypto';
 
