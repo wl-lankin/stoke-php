@@ -1,7 +1,7 @@
 {
-  "name": "hearth-php",
+  "name": "stoke-php",
   "version": "0.1.0",
-  "description": "PHP builds and the signed download catalog for Hearth.",
+  "description": "PHP builds and the signed download catalog for Stoke.",
   "author": "Wolfgang Linz <https://wolfgang-linz.de>",
   "license": "MIT",
   "private": true,

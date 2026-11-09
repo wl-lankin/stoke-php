@@ -2,7 +2,7 @@ name: manifest
 
 # Weekly: builds macOS PHP for every minor with a new patch, regenerates the catalog and publishes
 # manifest.json + manifest.json.sig (plus the CA bundle and the macOS entry list) to the release
-# "manifest". Hearth reads releases/download/manifest/manifest.json.
+# "manifest". Stoke reads releases/download/manifest/manifest.json.
 
 on:
   schedule:
@@ -99,5 +99,5 @@ jobs:
         run: |
           cp macos-entries.json dist/
           gh release view manifest >/dev/null 2>&1 \
-            || gh release create manifest --title "PHP catalog" --notes "The signed catalog Hearth installs PHP from. Updated weekly." --latest=false
+            || gh release create manifest --title "PHP catalog" --notes "The signed catalog Stoke installs PHP from. Updated weekly." --latest=false
           gh release upload manifest dist/manifest.json dist/manifest.json.sig dist/macos-entries.json dist/cacert-*.pem --clobber

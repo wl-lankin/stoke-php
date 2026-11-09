@@ -22,9 +22,9 @@ import {
 } from './services.mjs';
 import { QA, RELEASES, windowsEntries } from './windows.mjs';
 
-const REPO = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/hearth-php';
+const REPO = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/stoke-php';
 // php.net answers an HTML page instead of JSON to requests without a User-Agent.
-const HEADERS = { 'User-Agent': 'hearth-php manifest generator (+https://github.com/wl-lankin/hearth-php)' };
+const HEADERS = { 'User-Agent': 'stoke-php manifest generator (+https://github.com/wl-lankin/stoke-php)' };
 
 async function get(url) {
   // The GitHub token (rate limits) goes to the GitHub API only.

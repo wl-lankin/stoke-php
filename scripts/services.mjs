@@ -1,4 +1,4 @@
-// The services Hearth runs (databases, Redis, search, S3), one catalog entry per kind, version
+// The services Stoke runs (databases, Redis, search, S3), one catalog entry per kind, version
 // line, OS and architecture. Every download is checked against what its publisher states (MD5,
 // SHA-256 list, GitHub asset digest) before its SHA-256 goes into the signed catalog. Typesense
 // publishes no hashes: its entries are hashed when the catalog is built and pinned by the signature.
@@ -156,6 +156,6 @@ export async function withFallback(kind, run, known, warn = console.warn) {
     return await run();
   } catch (e) {
     warn(`${kind}: ${e.message}; keeping the published entries`);
-    return [...known.values()].filter((s) => s.kind === kind && !s.url.includes('/hearth-php/releases/'));
+    return [...known.values()].filter((s) => s.kind === kind && !/\/(stoke|hearth)-php\/releases\//.test(s.url));
   }
 }

@@ -38,7 +38,7 @@ export function tarHas(gz, path) {
 
 /**
  * The SHA-256 of a PHP archive and whether it has SPX: `<root>/lib/spx.so` plus its web UI in
- * `<root>/share/spx/web-ui` (Hearth points spx.http_ui_assets_dir there; without it no report opens).
+ * `<root>/share/spx/web-ui` (Stoke points spx.http_ui_assets_dir there; without it no report opens).
  */
 export function archiveFacts(gz, root) {
   const spx = tarHas(gz, `${root}/lib/spx.so`) && tarHas(gz, `${root}/share/spx/web-ui/report.html`);
@@ -64,14 +64,22 @@ export function macosEntry({ version, arch, url, sha256, size, spx = false }) {
   };
 }
 
+/** The repo's names before it was renamed: `<owner>/hearth-php` for `<owner>/stoke-php`. */
+export function formerNames(repo) {
+  return repo.endsWith('/stoke-php') ? [repo.replace(/\/stoke-php$/, '/hearth-php')] : [];
+}
+
 /**
  * Throws unless `e` is a macOS build released by this repo: the list of earlier builds is read back
  * from a release asset before it is signed again, so it must not be able to point anywhere else.
  */
 export function checkEntry(repo, e) {
-  const expected = `https://github.com/${repo}/releases/download/php-${e.version}/php-${e.version}-macos-${e.arch}.tar.gz`;
-  if (e.os !== 'macos' || e.url !== expected || !/^[0-9a-f]{64}$/.test(e.sha256 ?? '')) {
-    throw new Error(`${e.url} is not a hearth-php macOS build`);
+  // Builds released before the repo was renamed (hearth-php, Stoke's old name) keep their URLs.
+  const expected = [repo, ...formerNames(repo)].map(
+    (r) => `https://github.com/${r}/releases/download/php-${e.version}/php-${e.version}-macos-${e.arch}.tar.gz`,
+  );
+  if (e.os !== 'macos' || !expected.includes(e.url) || !/^[0-9a-f]{64}$/.test(e.sha256 ?? '')) {
+    throw new Error(`${e.url} is not a stoke-php macOS build`);
   }
 }
 
@@ -116,12 +124,12 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     console.log(JSON.stringify(macosEntry({ version, arch, url, sha256, spx, size: statSync(archive).size })));
   } else if (command === 'releases') {
     const [out] = args;
-    const repo = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/hearth-php';
+    const repo = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/stoke-php';
     const { headersFor } = await import('./plan.mjs');
     const api = `https://api.github.com/repos/${repo}/releases?per_page=100`;
     const releases = await (await fetch(api, { headers: headersFor(api, process.env.GH_TOKEN) })).json();
     const inspect = async (url) => {
-      const res = await fetch(url, { headers: { 'User-Agent': 'hearth-php' }, redirect: 'follow' });
+      const res = await fetch(url, { headers: { 'User-Agent': 'stoke-php' }, redirect: 'follow' });
       if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
       const version = /\/php-([^/]+)\/php-/.exec(url)[1];
       return archiveFacts(Buffer.from(await res.arrayBuffer()), `php-${version}`);
@@ -134,7 +142,7 @@ if (import.meta.url === pathToFileURL(process.argv[1]).href) {
     const [out, ...inputs] = args;
     const read = (f) => (existsSync(f) ? [].concat(JSON.parse(readFileSync(f, 'utf8'))) : []);
     const merged = mergeEntries(...inputs.map(read));
-    const repo = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/hearth-php';
+    const repo = process.env.GITHUB_REPOSITORY ?? 'wl-lankin/stoke-php';
     merged.forEach((e) => checkEntry(repo, e));
     writeFileSync(out, `${JSON.stringify(merged, null, 2)}\n`);
   } else {

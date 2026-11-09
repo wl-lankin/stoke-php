@@ -85,7 +85,7 @@ jobs:
               file="builds/service-${kind}-${version}-${arch}/${kind}-${version}-macos-${arch}.tar.gz"
               [ -f "$file" ] || { echo "::warning::no ${arch} build of ${tag}"; continue; }
               gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 \
-                || gh release create "$tag" --repo "$GITHUB_REPOSITORY" --title "${tag} for macOS" --notes "Built from the official source for Hearth." --latest=false
+                || gh release create "$tag" --repo "$GITHUB_REPOSITORY" --title "${tag} for macOS" --notes "Built from the official source for Stoke." --latest=false
               if gh release view "$tag" --repo "$GITHUB_REPOSITORY" --json assets -q '.assets[].name' | grep -qx "$(basename "$file")"; then
                 echo "$(basename "$file") is already published; left as it is"
                 continue
