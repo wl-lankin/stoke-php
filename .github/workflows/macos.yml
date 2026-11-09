@@ -121,9 +121,14 @@ jobs:
           "$DIR/bin/php" -v
           MODULES="$("$DIR/bin/php" -m | tr '[:upper:]' '[:lower:]')"
           for ext in $(tr ',' ' ' < build/extensions.txt); do
+            # mbregex is part of mbstring and has no line of its own in `php -m`: checked below.
+            [ "$ext" = "mbregex" ] && continue
             name="$ext"; [ "$ext" = "opcache" ] && name="zend opcache"
             echo "$MODULES" | grep -qx "$name" || { echo "::error::$ext is missing"; exit 1; }
           done
+          # Laravel's Str calls mb_split; without mbregex every Laravel site answers 500.
+          "$DIR/bin/php" -r 'exit(mb_split("-", "a-b") === ["a", "b"] && mb_ereg_replace("b", "c", "ab") === "ac" ? 0 : 1);' \
+            || { echo "::error::mbstring was built without mbregex"; exit 1; }
           "$DIR/bin/php" -d "zend_extension=$PWD/$DIR/lib/xdebug.so" -v | grep -q Xdebug
           # SPX loads and writes a full report (metadata .json + .txt.gz) where Stoke points it.
           "$DIR/bin/php" -d "extension=$PWD/$DIR/lib/spx.so" -m | grep -qix spx
