@@ -11,6 +11,8 @@ Every week a workflow publishes `manifest.json` and its minisign signature to th
 
 - `php[]`: one build per minor, OS and architecture: `minor`, `version`, `channel` (`stable` or `rc`), `os` (`windows`, `macos`), `arch` (`x64`, `arm64`, `x86_64`), `url`, `sha256`, `size`, `format` (`zip`, `tar.gz`), `root` (folder inside the archive, empty for none) and `extensions`.
 - `extensions.<name>.kind`: `builtin` (compiled in), `dll` or `zend_dll` (Windows: a zip at `url` holding `file`), `zend_so` or `so` (macOS: `file` inside the PHP archive, loaded with `zend_extension=` or `extension=`). `spx` is listed only for archives that contain it.
+- `services[]`: database, Redis, search and S3 builds: `kind`, `line`, `version`, `os`, `arch`, `url`, `sha256`, `format` (`zip`, `tar.gz`, `binary`), `root`.
+- `wsl[]`: like `services[]`, for builds a Windows computer runs inside WSL (Typesense, which has no Windows build). `os` is `linux`, `arch` is the Windows computer's (`x64`, `arm64`). A separate list because Stoke builds before WSL support reject an unknown `os` in `services[]`.
 - `node[]`: the newest Node.js release of every major from `pins.json` `node.minMajor` up: `major`, `version`, `lts` (codename or null), `os`, `arch`, `url`, `sha256`, `format`, `root`. Checked against nodejs.org's SHASUMS256.txt.
 - `composer` and `cacert`: `url` and `sha256` of Composer and the CA bundle.
 

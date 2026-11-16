@@ -148,6 +148,20 @@ export async function typesenseEntries({ versions, fetchBytes, peek, known }) {
   return out;
 }
 
+/** Typesense for Windows computers, which run its Linux build inside WSL. These rows go into the
+ * catalog's `wsl` list, not `services`: Stoke builds before WSL support read `os` strictly and
+ * would reject the whole catalog over a `linux` row. `arch` is the Windows computer's. */
+export async function typesenseWslEntries({ versions, fetchBytes, peek, known }) {
+  const out = [];
+  for (const version of versions) {
+    for (const [arch, target] of [['x64', 'linux-amd64'], ['arm64', 'linux-arm64']]) {
+      const url = `https://dl.typesense.org/releases/${version}/typesense-server-${version}-${target}.tar.gz`;
+      out.push(await entry({ kind: 'typesense', line: lineOf(version, 1), version, os: 'linux', arch, format: 'tar.gz', url, fetchBytes, peek, known }));
+    }
+  }
+  return out;
+}
+
 /** Runs one source; when it fails (a vendor down, a release still uploading), its entries from the
  * published catalog are kept so the rest of the catalog still updates. This repo's own macOS
  * builds are left out here: they come from their own releases. */

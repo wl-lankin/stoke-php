@@ -18,6 +18,7 @@ import {
   postgresEntries,
   siloEntries,
   typesenseEntries,
+  typesenseWslEntries,
   withFallback,
 } from './services.mjs';
 import { QA, RELEASES, windowsEntries } from './windows.mjs';
@@ -144,6 +145,12 @@ async function services(pins, current) {
   return [...groups.flat(), ...own];
 }
 
+/** Builds that Windows computers run inside WSL (Typesense has no Windows build). */
+async function wsl(pins, current) {
+  const known = byUrl(current.wsl);
+  return withFallback('typesense', () => typesenseWslEntries({ versions: pins.typesense, fetchBytes: bytes, peek, known }), known);
+}
+
 /** Node.js; when nodejs.org fails, the published entries are kept. */
 async function node(minMajor, current) {
   try {
@@ -174,6 +181,7 @@ const manifest = {
   cacert: { url: ca.url, sha256: ca.sha256 },
   tools: { caddy: await caddy() },
   services: windowsOnly ? [] : await services(pins.services, current),
+  wsl: windowsOnly ? [] : await wsl(pins.services, current),
   node: windowsOnly ? [] : await node(pins.node.minMajor, current),
 };
 const errors = validate(manifest);
