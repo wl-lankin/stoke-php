@@ -10,6 +10,7 @@ import {
   postgresEntries,
   siloEntries,
   typesenseEntries,
+  typesenseWslEntries,
 } from '../scripts/services.mjs';
 import { example } from './fixtures.mjs';
 
@@ -125,6 +126,27 @@ test('Typesense for macOS only, hashed when the catalog is built', async () => {
   const entries = await typesenseEntries({ versions: ['30.2'], fetchBytes, peek });
   assert.deepEqual(entries.map((e) => [e.line, e.os, e.arch]), [['30', 'macos', 'arm64'], ['30', 'macos', 'x86_64']]);
   assert.equal(entries[0].url, 'https://dl.typesense.org/releases/30.2/typesense-server-30.2-darwin-arm64.tar.gz');
+});
+
+test('Typesense for WSL: the Linux builds, listed by the Windows architecture', async () => {
+  const entries = await typesenseWslEntries({ versions: ['30.2'], fetchBytes, peek });
+  assert.deepEqual(entries.map((e) => [e.kind, e.line, e.os, e.arch, e.format]), [
+    ['typesense', '30', 'linux', 'x64', 'tar.gz'], ['typesense', '30', 'linux', 'arm64', 'tar.gz'],
+  ]);
+  assert.equal(entries[0].url, 'https://dl.typesense.org/releases/30.2/typesense-server-30.2-linux-amd64.tar.gz');
+  assert.equal(entries[1].url, 'https://dl.typesense.org/releases/30.2/typesense-server-30.2-linux-arm64.tar.gz');
+  assert.equal(entries[0].sha256, sha('sha256', body('typesense-server-30.2-linux-amd64.tar.gz')));
+});
+
+test('the catalog accepts WSL builds and checks them', async () => {
+  const entries = await typesenseWslEntries({ versions: ['30.2'], fetchBytes, peek });
+  assert.deepEqual(validate({ ...example, wsl: entries }), []);
+  const broken = structuredClone(entries);
+  broken[0].os = 'windows';
+  broken[1].arch = 'x86_64';
+  const errors = validate({ ...example, wsl: broken });
+  assert.ok(errors.includes('wsl[0].os windows is not linux'), errors.join('\n'));
+  assert.ok(errors.includes('wsl[1].arch x86_64 is not a Windows architecture'), errors.join('\n'));
 });
 
 test('the catalog accepts services and checks them', async () => {
